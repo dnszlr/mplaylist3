@@ -1,11 +1,8 @@
 import re
 from pytube import Playlist, YouTube 
 
-limit = 100
-
 def get_playlist(playlist_url):
     print(f"Playlist URL: {playlist_url}")
-    videos = []
     playlist = Playlist(playlist_url)
     playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
     return playlist
@@ -14,12 +11,8 @@ def get_videos(playlist):
     videos = []
     print('Number of videos in playlist: %s' % len(playlist.video_urls))
     if playlist:
-        video_amount = len(playlist.video_urls)
-        if video_amount <= limit:
-            for video in playlist.videos:
-                videos.append(video)
-        else:
-            print(f"Can't download {playlist.title} because it contains more than {limit} videos")    
+        for video in playlist.videos:
+            videos.append(video)
     else:
         print("Invalid playlist URL")    
     return videos

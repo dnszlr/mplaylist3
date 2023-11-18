@@ -6,7 +6,15 @@ This Python script allows you to download videos from a YouTube playlist and con
 
 ## Prerequisites
 
-- Python 3.x
+- Install [*Python 3.x*](https://www.python.org/downloads/)
+- Install [*pytube*](https://pypi.org/project/pytube/)
+    ```bash
+    pip install pytube
+    ```
+- Install [*moviepy*](https://pypi.org/project/moviepy/)
+    ```bash
+    pip install moviepy
+    ```
 - Install the required libraries:
 
     ```bash
