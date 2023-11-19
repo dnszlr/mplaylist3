@@ -1,5 +1,6 @@
 __pycache__/
 out/
 build/
-dist/
+dist/out/
+dist/mpl3.exe
 mpl3.spec

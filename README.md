@@ -38,7 +38,7 @@ This Python script allows you to download videos from a YouTube playlist and con
 2. **Build the Executable:**
 
     ```bash
-    pyinstaller --onefile --noconsole mpl3.py
+    pyinstaller --onefile --noconsole --icon=./assets/mpl3.ico  mpl3.py
     ```
 
 3. **Run the Executable:**

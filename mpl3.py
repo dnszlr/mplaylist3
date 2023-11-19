@@ -1,9 +1,11 @@
-import os
-import threading
-from converter import convert_to_mp3
 from playlist_parser import get_playlist, get_videos, get_video_streams
-import tkinter as tk
+from converter import convert_to_mp3
 from tkinter import messagebox, ttk
+from PIL import Image, ImageTk
+import tkinter as tk
+import threading
+import sys
+import os
 
 class MPL3:
     def __init__(self, master):
@@ -46,9 +48,9 @@ class MPL3:
 
     def preview_playlist(self):
         playlist_url = self.playlist_entry.get()
-        if playlist_url:
+        playlist = get_playlist(str(playlist_url))
+        if playlist_url and playlist:
             root.config(cursor="watch")
-            playlist = get_playlist(str(playlist_url))
             self.playlist_label.config(text=playlist.title)
             videos = get_videos(playlist)
             for idx, video in enumerate(videos, start=1):
@@ -60,7 +62,7 @@ class MPL3:
             self.increase_process_value(0)
             root.config(cursor="")
         else:
-            messagebox.showerror("Missing Playlist", "Please enter a Playlist URL.")
+            messagebox.showerror("Playlist Not Found", "Provide a valid URL for a publicly accessible playlist.")
 
     def download_playlist(self):
         selected_titles = [self.playlist_listbox.get(idx) for idx in self.playlist_listbox.curselection()]
@@ -81,15 +83,24 @@ class MPL3:
             except Exception as err:
                 print(f"Outer error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
-        messagebox.showinfo("Done", "Your files have been successfully downloaded!")
+        messagebox.showinfo("Completion", "The download process has been completed.")
         root.config(cursor="")
         self.increase_process_value(0)
 
     def open_files(self):
-        current_file_path = os.path.abspath(__file__)
-        current_directory = os.path.dirname(current_file_path)
+        path = os.path.abspath(__file__)
+        if getattr(sys, 'frozen', False):
+            path = sys.executable
+        current_directory = os.path.dirname(path)
         explorer_path = os.path.join(current_directory, "out")
-        os.system(f'explorer {explorer_path}')
+        if sys.platform.startswith('win'):
+            os.system(f'explorer {explorer_path}')
+        elif sys.platform.startswith('darwin'):
+            os.system(f'open {explorer_path}')
+        elif sys.platform.startswith('linux'):
+            os.system(f'xdg-open {explorer_path}')
+        else:
+            messagebox.showerror("Unsupported platform for file opening.")
 
     def get_selected_titles(self):
         return [self.playlist_listbox.get(idx) for idx in range(self.playlist_listbox.size())]
@@ -102,13 +113,14 @@ class MPL3:
         download_thread = threading.Thread(target=self.download_playlist)
         download_thread.start()
 
-    def increase_process_value(self, amount):
-        progress_value = amount
+    def increase_process_value(self, progress_value):
         self.progress_var.set(progress_value)
         root.update_idletasks()
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = MPL3(root)
-    root.iconbitmap('./assets/mpl3.ico')
+    im = Image.open('./assets/mpl3.ico')
+    icon = ImageTk.PhotoImage(im)
+    root.wm_iconphoto(True, icon)
     root.mainloop()

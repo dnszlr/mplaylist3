@@ -3,18 +3,18 @@ from pytube import Playlist, YouTube
 
 def get_playlist(playlist_url):
     playlist = None
-    try:
+    if verify_url(playlist_url):
         print(f"Playlist URL: {playlist_url}")
         playlist = Playlist(playlist_url)
         playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
-    except Exception as err:
-        print(f"Invalid playlist URL: {err}")
+    else:
+        print(f"Invalid playlist URL: {playlist_url}")
     return playlist
 
 def get_videos(playlist):
     videos = []
-    print('Number of videos in playlist: %s' % len(playlist.video_urls))
     if playlist:
+        print('Number of videos in playlist: %s' % len(playlist.video_urls))
         for video in playlist.videos:
             videos.append(video)
     else:
@@ -35,3 +35,11 @@ def get_video_streams(videos):
         except Exception as err:
             print(f"Exception occured {err}")
     return video_streams
+
+
+def verify_url(playlist_url):
+    if not playlist_url: 
+        return False
+    else:
+        pattern = re.compile(r'https://www\.youtube\.(?:com|de|fr|...)/(?:playlist|watch)\?list=.+')
+        return bool(re.match(pattern, playlist_url))
