@@ -1,9 +1,9 @@
 from moviepy.editor import AudioFileClip
-from file_handling import get_out_folder
+from file_handling import get_root_folder
 import os, logging
 
 def convert_to_mp3(data, playlist_title):
-    output_folder = get_out_folder()
+    output_folder = os.path.join(get_root_folder(), "out")
     os.makedirs(output_folder, exist_ok=True)
     playlist_folder = os.path.join(output_folder, playlist_title)
     os.makedirs(playlist_folder, exist_ok=True)

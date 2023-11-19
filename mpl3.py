@@ -1,4 +1,4 @@
-from file_handling import get_out_folder, is_exe
+from file_handling import get_root_folder, is_exe
 from playlist_parser import get_playlist, get_videos, get_video_streams
 import sys, os, threading, logging, tkinter as tk
 from converter import convert_to_mp3
@@ -86,7 +86,7 @@ class MPL3:
         self.increase_process_value(0)
 
     def open_files(self):
-        out_directory = get_out_folder()
+        out_directory = os.path.join(get_root_folder(), "out")
         if sys.platform.startswith('win'):
             os.system(f'explorer {out_directory}')
         elif sys.platform.startswith('darwin'):
@@ -119,12 +119,12 @@ if __name__ == "__main__":
                         format='%(asctime)s [%(levelname)s]: %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S')
     executed_as_exe = is_exe()
-    output = None
+    # Don't delete me, moviepy needs something to write to if no console is present
+    temp_output_path = os.path.join(get_root_folder(), "output.txt")
     if executed_as_exe:
-        output_file = os.path.join(get_out_folder(), "output.txt")
-        output = open(output_file, "wt")
-        sys.stdout = output
-        sys.stderr = output
+        temp_output_file = open(temp_output_path, "wt")
+        sys.stdout = temp_output_file
+        sys.stderr = temp_output_file
     root = tk.Tk()
     app = MPL3(root)
     im = Image.open('./assets/mpl3.ico')
@@ -132,4 +132,4 @@ if __name__ == "__main__":
     root.wm_iconphoto(True, icon)
     root.mainloop()
     if executed_as_exe:
-        output.close()
+        os.remove(temp_output_path)

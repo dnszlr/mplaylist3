@@ -1,5 +1,6 @@
 __pycache__/
 out/
 build/
-dist/out/
-dist/mpl3.exe
+# Exlude all from dist except assets
+dist/*
+!dist/assets/
