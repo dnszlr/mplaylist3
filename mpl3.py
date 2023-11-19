@@ -121,6 +121,7 @@ if __name__ == "__main__":
     executed_as_exe = is_exe()
     # Don't delete me, moviepy needs something to write to if no console is present
     temp_output_path = os.path.join(get_root_folder(), "output.txt")
+    temp_output_file = None
     if executed_as_exe:
         temp_output_file = open(temp_output_path, "wt")
         sys.stdout = temp_output_file
@@ -131,5 +132,6 @@ if __name__ == "__main__":
     icon = ImageTk.PhotoImage(im)
     root.wm_iconphoto(True, icon)
     root.mainloop()
-    if executed_as_exe:
+    if executed_as_exe and temp_output_file:
+        temp_output_file.close()
         os.remove(temp_output_path)
