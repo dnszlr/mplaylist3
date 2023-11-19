@@ -63,14 +63,14 @@ class MPL3:
             messagebox.showerror("Missing Playlist", "Please enter a Playlist URL.")
 
     def download_playlist(self):
-        root.config(cursor="watch")
-        self.increase_process_value(1)
         selected_titles = [self.playlist_listbox.get(idx) for idx in self.playlist_listbox.curselection()]
         if len(selected_titles) == 0:
             selected_titles = self.get_selected_titles()
-            if len(selected_titles) == 0:
-                self.preview_playlist()
-                selected_titles = self.get_selected_titles()
+        if len(selected_titles) == 0:
+            self.preview_playlist()
+            selected_titles = self.get_selected_titles()
+        root.config(cursor="watch")
+        self.increase_process_value(1)
         selected_videos = [video for video in self.video_storage if video.title in selected_titles]
         streams = get_video_streams(selected_videos)
         playlist_title = self.playlist_label.cget("text")
@@ -81,8 +81,8 @@ class MPL3:
             except Exception as err:
                 print(f"Outer error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
-        root.config(cursor="")
         messagebox.showinfo("Done", "Your files have been successfully downloaded!")
+        root.config(cursor="")
         self.increase_process_value(0)
 
     def open_files(self):
