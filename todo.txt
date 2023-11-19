@@ -1,0 +1,2 @@
+1. Favicon not shown in explorer
+2. Favicon in header of program looks bad
