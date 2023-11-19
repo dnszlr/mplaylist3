@@ -13,7 +13,7 @@ This Python script allows you to download videos from a YouTube playlist and con
     ```
 - Install [*moviepy*](https://pypi.org/project/moviepy/)
     ```bash
-    pip install moviepy
+    pip install moviepy==1.0.0
     ```
 
 - Install [*pyinstaller*](https://pypi.org/project/pyinstaller/)
@@ -27,7 +27,7 @@ This Python script allows you to download videos from a YouTube playlist and con
     pip install -r requirements.txt
     ```
 
-## How to Use
+## How to Use (from project root folder)
 
 1. **Install Dependencies:**
 
@@ -38,7 +38,7 @@ This Python script allows you to download videos from a YouTube playlist and con
 2. **Build the Executable:**
 
     ```bash
-    pyinstaller --onefile --noconsole --icon=./assets/mpl3.ico  mpl3.py
+    pyinstaller ./mpl3.spec
     ```
 
 3. **Run the Executable:**
@@ -64,6 +64,8 @@ This Python script allows you to download videos from a YouTube playlist and con
    - **Press "Preview"** to display the songs in the playlist. Select specific songs and proceed to download.
 
    - **Click "Download" directly** to download all songs in the playlist.
+
+   - **Press "
 
 6. **Enjoy Your Downloaded Audio Files!**
 

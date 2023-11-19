@@ -1,11 +1,9 @@
+from file_handling import get_out_folder, is_exe
 from playlist_parser import get_playlist, get_videos, get_video_streams
+import sys, os, threading, logging, tkinter as tk
 from converter import convert_to_mp3
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
-import tkinter as tk
-import threading
-import sys
-import os
 
 class MPL3:
     def __init__(self, master):
@@ -81,26 +79,24 @@ class MPL3:
             try:
                 convert_to_mp3(stream, playlist_title)
             except Exception as err:
-                print(f"Outer error while downloading or converting {stream['title']} to mp3 with {err}")
+                logging.debug(f"Outer error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
         messagebox.showinfo("Completion", "The download process has been completed.")
         root.config(cursor="")
         self.increase_process_value(0)
 
     def open_files(self):
-        path = os.path.abspath(__file__)
-        if getattr(sys, 'frozen', False):
-            path = sys.executable
-        current_directory = os.path.dirname(path)
-        explorer_path = os.path.join(current_directory, "out")
+        out_directory = get_out_folder()
         if sys.platform.startswith('win'):
-            os.system(f'explorer {explorer_path}')
+            os.system(f'explorer {out_directory}')
         elif sys.platform.startswith('darwin'):
-            os.system(f'open {explorer_path}')
+            os.system(f'open {out_directory}')
         elif sys.platform.startswith('linux'):
-            os.system(f'xdg-open {explorer_path}')
+            os.system(f'xdg-open {out_directory}')
         else:
-            messagebox.showerror("Unsupported platform for file opening.")
+            message = "Unsupported platform for file opening."
+            logging.debug(message)
+            messagebox.showerror(message)
 
     def get_selected_titles(self):
         return [self.playlist_listbox.get(idx) for idx in range(self.playlist_listbox.size())]
@@ -118,9 +114,22 @@ class MPL3:
         root.update_idletasks()
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='debug.log', 
+                        level=logging.DEBUG, 
+                        format='%(asctime)s [%(levelname)s]: %(message)s',
+                        datefmt='%d/%m/%Y %H:%M:%S')
+    executed_as_exe = is_exe()
+    output = None
+    if executed_as_exe:
+        output_file = os.path.join(get_out_folder(), "output.txt")
+        output = open(output_file, "wt")
+        sys.stdout = output
+        sys.stderr = output
     root = tk.Tk()
     app = MPL3(root)
     im = Image.open('./assets/mpl3.ico')
     icon = ImageTk.PhotoImage(im)
     root.wm_iconphoto(True, icon)
     root.mainloop()
+    if executed_as_exe:
+        output.close()

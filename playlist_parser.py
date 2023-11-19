@@ -1,5 +1,5 @@
-import re
-from pytube import Playlist, YouTube 
+from pytube import Playlist 
+import re, logging
 
 def get_playlist(playlist_url):
     playlist = None
@@ -8,7 +8,7 @@ def get_playlist(playlist_url):
         playlist = Playlist(playlist_url)
         playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
     else:
-        print(f"Invalid playlist URL: {playlist_url}")
+        logging.debug(f"Invalid playlist URL: {playlist_url}")
     return playlist
 
 def get_videos(playlist):
@@ -18,7 +18,7 @@ def get_videos(playlist):
         for video in playlist.videos:
             videos.append(video)
     else:
-        print("Invalid playlist")    
+        logging.debug("Invalid playlist")
     return videos
 
 def get_video_streams(videos):
@@ -33,7 +33,7 @@ def get_video_streams(videos):
             }
             video_streams.append(video_data)
         except Exception as err:
-            print(f"Exception occured {err}")
+            logging.debug(f"Exception occured while getting video streams {err}")
     return video_streams
 
 
