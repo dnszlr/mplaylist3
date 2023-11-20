@@ -57,7 +57,7 @@ This Python script allows you to download videos from a YouTube playlist and con
 
    - **Press "Preview"** to display the songs in the playlist. Select specific songs and proceed to download.
 
-   - **Click "Download"** to download all songs in the playlist (can be used without creating a **Preview**).
+   - **Click "Download"** to download selected (or all if nothing got selected in preview) songs in the playlist (can be used without creating a **Preview**).
 
    - **Select "Playlists"** to access the directory on your computer containing all downloaded playlists.
 
