@@ -48,7 +48,7 @@ class MPL3:
         playlist_url = self.playlist_entry.get()
         playlist = get_playlist(str(playlist_url))
         if playlist_url and playlist:
-            root.config(cursor="watch")
+            self.start_process()
             self.playlist_label.config(text=playlist.title)
             videos = get_videos(playlist)
             for idx, video in enumerate(videos, start=1):
@@ -57,8 +57,7 @@ class MPL3:
                     title = video.title
                     self.video_storage.append(video)
                     self.playlist_listbox.insert(tk.END, title)
-            self.increase_process_value(0)
-            root.config(cursor="")
+            self.stop_process()
         else:
             messagebox.showerror("Playlist Not Found", "Provide a valid URL for a publicly accessible playlist.")
 
@@ -69,8 +68,7 @@ class MPL3:
         if len(selected_titles) == 0:
             self.preview_playlist()
             selected_titles = self.get_selected_titles()
-        root.config(cursor="watch")
-        self.increase_process_value(1)
+        self.start_process()
         selected_videos = [video for video in self.video_storage if video.title in selected_titles]
         streams = get_video_streams(selected_videos)
         playlist_title = self.playlist_label.cget("text")
@@ -82,8 +80,7 @@ class MPL3:
                 logging.debug(f"Outer error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
         messagebox.showinfo("Completion", "The download process has been completed.")
-        root.config(cursor="")
-        self.increase_process_value(0)
+        self.stop_process()
 
     def open_files(self):
         out_directory = os.path.join(get_root_folder(), "out")
@@ -113,6 +110,14 @@ class MPL3:
         self.progress_var.set(progress_value)
         root.update_idletasks()
 
+    def start_process(self):
+        root.config(cursor="watch")
+        self.increase_process_value(1)
+
+    def stop_process(self):
+        root.config(cursor="")
+        self.increase_process_value(0)
+        
 if __name__ == "__main__":
     logging.basicConfig(filename='debug.log', 
                         level=logging.DEBUG, 

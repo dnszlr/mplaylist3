@@ -1,6 +1,8 @@
 from pytube import Playlist 
 import re, logging
 
+from classes import Video
+
 def get_playlist(playlist_url):
     playlist = None
     if verify_url(playlist_url):
@@ -27,10 +29,7 @@ def get_video_streams(videos):
     for video in videos:
         try:
             print(f": {video.title}")
-            video_data = {
-                'title': video.title,
-                'stream': video.streams.get_highest_resolution()
-            }
+            video_data = Video(video.title, video.streams.get_highest_resolution())
             video_streams.append(video_data)
         except Exception as err:
             logging.debug(f"Exception occured while getting video streams {err}")
