@@ -1,9 +1,10 @@
 from file_handling import get_root_folder, is_exe
-from playlist_parser import get_playlist, get_videos, get_video_streams
-import sys, os, threading, logging, tkinter as tk
+from playlist_parser import get_playlist, get_videos, get_streams
+import sys, os, threading, tkinter as tk
 from converter import convert_to_mp3
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
+import logger as Logger
 
 class MPL3:
     def __init__(self, master):
@@ -70,20 +71,21 @@ class MPL3:
             selected_titles = self.get_selected_titles()
         self.start_process()
         selected_videos = [video for video in self.video_storage if video.title in selected_titles]
-        streams = get_video_streams(selected_videos)
+        streams = get_streams(selected_videos)
         playlist_title = self.playlist_label.cget("text")
         for idx, stream in enumerate(streams, start=1):
             print(f"Steam is: {stream}")
             try:
                 convert_to_mp3(stream, playlist_title)
             except Exception as err:
-                logging.debug(f"Outer error while downloading or converting {stream['title']} to mp3 with {err}")
+                Logger.debug(f"Error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
         messagebox.showinfo("Completion", "The download process has been completed.")
         self.stop_process()
 
     def open_files(self):
         out_directory = os.path.join(get_root_folder(), "out")
+        Logger.info(f"Playlist directory is {out_directory}")
         if sys.platform.startswith('win'):
             os.system(f'explorer {out_directory}')
         elif sys.platform.startswith('darwin'):
@@ -91,8 +93,8 @@ class MPL3:
         elif sys.platform.startswith('linux'):
             os.system(f'xdg-open {out_directory}')
         else:
-            message = "Unsupported platform for file opening."
-            logging.debug(message)
+            message = "Your operating system is not supported."
+            Logger.debug(message)
             messagebox.showerror(message)
 
     def get_selected_titles(self):
@@ -119,15 +121,12 @@ class MPL3:
         self.increase_process_value(0)
         
 if __name__ == "__main__":
-    logging.basicConfig(filename='debug.log', 
-                        level=logging.DEBUG, 
-                        format='%(asctime)s [%(levelname)s]: %(message)s',
-                        datefmt='%d/%m/%Y %H:%M:%S')
     executed_as_exe = is_exe()
     # Don't delete me, moviepy needs something to write to if no console is present
     temp_output_path = os.path.join(get_root_folder(), "output.txt")
     temp_output_file = None
     if executed_as_exe:
+        Logger.configureInfo('info.log')
         temp_output_file = open(temp_output_path, "wt")
         sys.stdout = temp_output_file
         sys.stderr = temp_output_file

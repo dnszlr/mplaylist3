@@ -3,10 +3,10 @@ import os, sys
 def get_root_folder():
     path = os.path.abspath(__file__)
     if is_exe():
-        print("is exe")
         path = sys.executable
-    dire = os.path.dirname(path)
-    return dire
+    rootFolder = os.path.dirname(path)
+    return rootFolder
 
 def is_exe():
-    return getattr(sys, 'frozen', False)
+    is_exe = getattr(sys, 'frozen', False)
+    return is_exe

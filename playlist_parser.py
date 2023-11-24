@@ -1,38 +1,39 @@
 from pytube import Playlist 
-import re, logging
+import re
+import logger as Logger
 
 from classes import Video
 
 def get_playlist(playlist_url):
+    Logger.info(f"Starting preview of playlist with url: {playlist_url}")
     playlist = None
     if verify_url(playlist_url):
-        print(f"Playlist URL: {playlist_url}")
         playlist = Playlist(playlist_url)
         playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
     else:
-        logging.debug(f"Invalid playlist URL: {playlist_url}")
+        Logger.debug(f"The passed url {playlist_url} is not a playlist")
     return playlist
 
 def get_videos(playlist):
     videos = []
     if playlist:
-        print('Number of videos in playlist: %s' % len(playlist.video_urls))
+        Logger.info(f"Amount of videos in playlist: {len(playlist.video_urls)}")
         for video in playlist.videos:
             videos.append(video)
     else:
-        logging.debug("Invalid playlist")
+        Logger.debug("Invalid playlist")
     return videos
 
-def get_video_streams(videos):
+def get_streams(videos):
     video_streams = []
-    print("Process videos streams")
+    Logger.info("Process videos streams")
     for video in videos:
         try:
-            print(f": {video.title}")
+            Logger.info(f"Receiving stream for {video.title}")
             video_data = Video(video.title, video.streams.get_highest_resolution())
             video_streams.append(video_data)
         except Exception as err:
-            logging.debug(f"Exception occured while getting video streams {err}")
+            Logger.debug(f"Exception occured while getting video streams: {err}")
     return video_streams
 
 
