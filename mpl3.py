@@ -60,7 +60,7 @@ class MPL3:
                     self.playlist_listbox.insert(tk.END, title)
             self.stop_process()
         else:
-            messagebox.showerror("Playlist Not Found", "Provide a valid URL for a publicly accessible playlist.")
+            messagebox.showerror("Playlist not found", "Provide a valid URL for a publicly accessible playlist and check internet connection.")
 
     def download_playlist(self):
         selected_titles = [self.playlist_listbox.get(idx) for idx in self.playlist_listbox.curselection()]
@@ -85,6 +85,7 @@ class MPL3:
 
     def open_files(self):
         out_directory = os.path.join(get_root_folder(), "out")
+        os.makedirs(out_directory, exist_ok=True)
         Logger.info(f"Playlist directory is {out_directory}")
         if sys.platform.startswith('win'):
             os.system(f'explorer {out_directory}')

@@ -8,8 +8,12 @@ def get_playlist(playlist_url):
     Logger.info(f"Starting preview of playlist with url: {playlist_url}")
     playlist = None
     if verify_url(playlist_url):
-        playlist = Playlist(playlist_url)
-        playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
+        try:
+            playlist = Playlist(playlist_url)
+            playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
+            Logger.info("After playlist")
+        except Exception as err:
+            Logger.error(f"Couldn't read playlist url, check internet connection {err}")
     else:
         Logger.debug(f"The passed url {playlist_url} is not a playlist")
     return playlist

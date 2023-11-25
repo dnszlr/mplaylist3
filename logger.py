@@ -5,19 +5,19 @@ def info(message):
     if is_exe():
         logging.info(message)
     else:
-        print(message)
+        print(f"Info: {message}")
 
 def debug(message):
     if is_exe():
         logging.debug(message)
     else:
-        print(message)        
+        print(f"Debug: {message}")        
 
 def error(message):
     if is_exe():
-        logging.debug(message)
+        logging.error(message)
     else:
-        print(message)
+        print(f"Error: {message}")
 
 
 def configureDebug(filename):
