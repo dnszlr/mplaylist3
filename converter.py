@@ -23,7 +23,7 @@ def convert_to_mp3(video, playlist_title):
         Logger.info(f"Deleting Video file {mp4}")
         os.remove(mp4)
     except Exception as err:
-        Logger.debug(f"Error while downloading or converting {video.title} to mp3 with {err}")
+        Logger.error(f"Error while downloading or converting {video.title} to mp3 with {err}")
 
 def replace_forbidden_characters(title):
     forbidden_characters = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']

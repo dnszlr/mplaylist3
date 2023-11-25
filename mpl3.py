@@ -18,14 +18,14 @@ class MPL3:
         self.video_storage = []
 
         # Playlist Link Entry
-        self.playlist_label = tk.Label(master, text="Enter Playlist URL:")
+        self.playlist_label = tk.Label(master, text="Playlist URL")
         self.playlist_label.pack()
 
         self.playlist_entry = tk.Entry(master)
         self.playlist_entry.pack(fill=tk.X)
 
         # Playlist Listbox
-        self.playlist_label = tk.Label(master, text="Playlist")
+        self.playlist_label = tk.Label(master, text="Playlist Content")
         self.playlist_label.pack()
         self.playlist_listbox = tk.Listbox(master, selectmode=tk.MULTIPLE)
         self.playlist_listbox.pack(expand=True, fill=tk.BOTH)
@@ -38,6 +38,9 @@ class MPL3:
         # File Button
         self.explorer_button = tk.Button(master, text="Playlists", width=20, command=self.open_files)
         self.explorer_button.pack(side='left', anchor='e')
+        # Reset Button
+        self.reset_button = tk.Button(master, text="Reset", width=20, command=self.reset_playlist)
+        self.reset_button.pack(side='left', anchor='e')
         # Download Button
         self.download_button = tk.Button(master, text="Download", width=20, command=self.start_download)
         self.download_button.pack(side='right', anchor='w')
@@ -78,7 +81,7 @@ class MPL3:
             try:
                 convert_to_mp3(stream, playlist_title)
             except Exception as err:
-                Logger.debug(f"Error while downloading or converting {stream['title']} to mp3 with {err}")
+                Logger.error(f"Error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
         messagebox.showinfo("Completion", "The download process has been completed.")
         self.stop_process()
@@ -97,6 +100,11 @@ class MPL3:
             message = "Your operating system is not supported."
             Logger.debug(message)
             messagebox.showerror(message)
+
+    def reset_playlist(self):
+        self.playlist_listbox.delete(0,tk.END)
+        self.video_storage = []
+        self.playlist_label.config(text='Playlist Content')
 
     def get_selected_titles(self):
         return [self.playlist_listbox.get(idx) for idx in range(self.playlist_listbox.size())]

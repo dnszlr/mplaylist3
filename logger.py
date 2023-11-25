@@ -24,7 +24,7 @@ def configureDebug(filename):
     configureLogger(filename, logging.debug)
 
 def configureInfo(filename):
-    configureLogger(filename, level=logging.INFO)
+    configureLogger(filename, logging.INFO)
     
 def configureLogger(filename, level):
     logging.basicConfig(

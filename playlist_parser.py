@@ -11,7 +11,6 @@ def get_playlist(playlist_url):
         try:
             playlist = Playlist(playlist_url)
             playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
-            Logger.info("After playlist")
         except Exception as err:
             Logger.error(f"Couldn't read playlist url, check internet connection {err}")
     else:
