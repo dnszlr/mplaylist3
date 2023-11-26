@@ -7,23 +7,23 @@ from classes import Wrapper, Video
 video_pattern = re.compile(r'^https://www\.youtube\.(?:com|de|fr|...)/watch\?v=.+')
 playlist_pattern = re.compile(r'https://www\.youtube\.(?:com|de|fr|...)/playlist\?list=.+')
 
-def get_playlist_from_url(url):
-    Logger.info(f"Receiving song information for {url}")
-    playlist = None
+def get_data_from_url(url):
+    Logger.info(f"Receiving data for {url}")
+    wrapper = None
     try:
         if verify_url(url, video_pattern):
             video = YouTube(url)
-            playlist = Wrapper(video.title, [video])
+            wrapper = Wrapper(video.title, [video])
         elif verify_url(url,playlist_pattern):    
             playlist = Playlist(url)
             playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
             videos = get_videos_from_playlist(playlist)
-            playlist = Wrapper(playlist.title, videos)
+            wrapper = Wrapper(playlist.title, videos)
         else:
             Logger.debug(f"The passed url {url} is not a video or playlist")
     except Exception as err:
         Logger.error(f"Couldn't read url, {err}")
-    return playlist
+    return wrapper
 
 def get_videos_from_playlist(playlist):
     videos = []

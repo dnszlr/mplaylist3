@@ -1,5 +1,5 @@
 from file_handling import get_root_folder, is_exe
-from youtube_parser import get_playlist_from_url, get_streams
+from youtube_parser import get_data_from_url, get_streams
 import sys, os, threading, tkinter as tk
 from converter import convert_to_mp3
 from tkinter import messagebox, ttk
@@ -12,19 +12,18 @@ class MPL3:
         # Set up master
         self.master = master
         self.master.title("MPL3")
-        self.master.geometry("800x600")
+        self.master.geometry("1200x800")
 
         # Data storage
         self.video_storage = []
 
-        # Playlist Link Entry
+        # URL
         self.url_label = tk.Label(master, text="Enter playlist or video URL")
         self.url_label.pack()
-
         self.url_entry = tk.Entry(master)
         self.url_entry.pack(fill=tk.X)
 
-        # Playlist Listbox
+        # Song Listbox
         self.songs_label = tk.Label(master, text="Song titles")
         self.songs_label.pack()
         self.songs_listbox = tk.Listbox(master, selectmode=tk.MULTIPLE)
@@ -35,50 +34,46 @@ class MPL3:
         self.progress_bar = ttk.Progressbar(root, variable=self.progress_var)
         self.progress_bar.pack(fill=tk.BOTH)
 
-        # File Button
+        # Buttons
         self.explorer_button = tk.Button(master, text="Download Folder", width=20, command=self.open_files)
         self.explorer_button.pack(side='left', anchor='e')
-        # Reset Button
         self.reset_button = tk.Button(master, text="Reset", width=20, command=self.reset_songs)
         self.reset_button.pack(side='left', anchor='e')
-        # Download Button
         self.download_button = tk.Button(master, text="Download", width=20, command=self.start_download)
         self.download_button.pack(side='right', anchor='w')
-        # Preview Button
         self.preview_button = tk.Button(master, text="Preview", width=20, command=self.start_preview)
         self.preview_button.pack(side='right', anchor='w')
 
-    def preview_playlist(self):
+    def preview(self):
         url = self.url_entry.get()
-        playlist = get_playlist_from_url(url)
-        if url and playlist:
+        wrapper = get_data_from_url(url)
+        if url and wrapper:
             self.start_process()
-            self.songs_label.config(text=playlist.title)
-            for idx, video in enumerate(playlist.videos, start=1):
-                self.increase_process_value((idx / len(playlist.videos)) * 100)
+            self.songs_label.config(text=wrapper.title)
+            for idx, video in enumerate(wrapper.videos, start=1):
+                self.increase_process_value((idx / len(wrapper.videos)) * 100)
                 if video not in self.video_storage:
                     title = video.title
                     self.video_storage.append(video)
                     self.songs_listbox.insert(tk.END, title)
             self.stop_process()
         else:
-            messagebox.showerror("Playlist not found", "Provide a valid URL for a publicly accessible playlist and check internet connection.")
+            messagebox.showerror("Videos not found", "Provide a valid URL for a publicly accessible video or playlist and check your internet connection.")
 
-    def download_playlist(self):
+    def download(self):
         selected_titles = [self.songs_listbox.get(idx) for idx in self.songs_listbox.curselection()]
         if len(selected_titles) == 0:
             selected_titles = self.get_selected_titles()
         if len(selected_titles) == 0:
-            self.preview_playlist()
+            self.preview()
             selected_titles = self.get_selected_titles()
         self.start_process()
         selected_videos = [video for video in self.video_storage if video.title in selected_titles]
         streams = get_streams(selected_videos)
-        playlist_title = self.songs_label.cget("text")
+        title = self.songs_label.cget("text")
         for idx, stream in enumerate(streams, start=1):
-            print(f"Steam is: {stream}")
             try:
-                convert_to_mp3(stream, playlist_title)
+                convert_to_mp3(stream, title)
             except Exception as err:
                 Logger.error(f"Error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
@@ -88,7 +83,7 @@ class MPL3:
     def open_files(self):
         out_directory = os.path.join(get_root_folder(), "out")
         os.makedirs(out_directory, exist_ok=True)
-        Logger.info(f"Playlist directory is {out_directory}")
+        Logger.info(f"Directory is {out_directory}")
         if sys.platform.startswith('win'):
             os.system(f'explorer {out_directory}')
         elif sys.platform.startswith('darwin'):
@@ -103,17 +98,17 @@ class MPL3:
     def reset_songs(self):
         self.songs_listbox.delete(0,tk.END)
         self.video_storage = []
-        self.songs_listbox.config(text='Playlist Content')
+        self.songs_listbox.config(text='Song titles')
 
     def get_selected_titles(self):
         return [self.songs_listbox.get(idx) for idx in range(self.songs_listbox.size())]
 
     def start_preview(self):
-        preview_thread = threading.Thread(target=self.preview_playlist)
+        preview_thread = threading.Thread(target=self.preview)
         preview_thread.start()
 
     def start_download(self):
-        download_thread = threading.Thread(target=self.download_playlist)
+        download_thread = threading.Thread(target=self.download)
         download_thread.start()
 
     def increase_process_value(self, progress_value):
