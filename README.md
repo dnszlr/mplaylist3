@@ -8,28 +8,10 @@ This Python script allows you to download videos from a YouTube (single video or
 
 - Install [*Python 3.x*](https://www.python.org/downloads/)
 
-**and**
-
 - Install the required libraries:
 
     ```bash
     pip install -r requirements.txt
-    ```
-
-**or**
-
-- Install [*pytube*](https://pypi.org/project/pytube/)
-    ```bash
-    pip install pytube
-    ```
-- Install [*moviepy*](https://pypi.org/project/moviepy/)
-    ```bash
-    pip install moviepy
-    ```
-
-- Install [*pyinstaller*](https://pypi.org/project/pyinstaller/)
-    ```bash
-    pip install pyinstaller
     ```
 
 ## How to use (Paths from root folder)
