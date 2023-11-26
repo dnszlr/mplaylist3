@@ -1,5 +1,5 @@
 from file_handling import get_root_folder, is_exe
-from playlist_parser import get_playlist, get_videos, get_streams
+from youtube_parser import get_playlist_from_url, get_streams
 import sys, os, threading, tkinter as tk
 from converter import convert_to_mp3
 from tkinter import messagebox, ttk
@@ -18,17 +18,17 @@ class MPL3:
         self.video_storage = []
 
         # Playlist Link Entry
-        self.playlist_label = tk.Label(master, text="Playlist or Video URL")
-        self.playlist_label.pack()
+        self.url_label = tk.Label(master, text="Enter playlist or video URL")
+        self.url_label.pack()
 
-        self.playlist_entry = tk.Entry(master)
-        self.playlist_entry.pack(fill=tk.X)
+        self.url_entry = tk.Entry(master)
+        self.url_entry.pack(fill=tk.X)
 
         # Playlist Listbox
-        self.playlist_label = tk.Label(master, text="Song titles")
-        self.playlist_label.pack()
-        self.playlist_listbox = tk.Listbox(master, selectmode=tk.MULTIPLE)
-        self.playlist_listbox.pack(expand=True, fill=tk.BOTH)
+        self.songs_label = tk.Label(master, text="Song titles")
+        self.songs_label.pack()
+        self.songs_listbox = tk.Listbox(master, selectmode=tk.MULTIPLE)
+        self.songs_listbox.pack(expand=True, fill=tk.BOTH)
 
         # Progress Bar
         self.progress_var = tk.DoubleVar()
@@ -36,10 +36,10 @@ class MPL3:
         self.progress_bar.pack(fill=tk.BOTH)
 
         # File Button
-        self.explorer_button = tk.Button(master, text="Playlists", width=20, command=self.open_files)
+        self.explorer_button = tk.Button(master, text="Download Folder", width=20, command=self.open_files)
         self.explorer_button.pack(side='left', anchor='e')
         # Reset Button
-        self.reset_button = tk.Button(master, text="Reset", width=20, command=self.reset_playlist)
+        self.reset_button = tk.Button(master, text="Reset", width=20, command=self.reset_songs)
         self.reset_button.pack(side='left', anchor='e')
         # Download Button
         self.download_button = tk.Button(master, text="Download", width=20, command=self.start_download)
@@ -49,24 +49,23 @@ class MPL3:
         self.preview_button.pack(side='right', anchor='w')
 
     def preview_playlist(self):
-        playlist_url = self.playlist_entry.get()
-        playlist = get_playlist(str(playlist_url))
-        if playlist_url and playlist:
+        url = self.url_entry.get()
+        playlist = get_playlist_from_url(url)
+        if url and playlist:
             self.start_process()
-            self.playlist_label.config(text=playlist.title)
-            videos = get_videos(playlist)
-            for idx, video in enumerate(videos, start=1):
-                self.increase_process_value((idx / len(videos)) * 100)
+            self.songs_label.config(text=playlist.title)
+            for idx, video in enumerate(playlist.videos, start=1):
+                self.increase_process_value((idx / len(playlist.videos)) * 100)
                 if video not in self.video_storage:
                     title = video.title
                     self.video_storage.append(video)
-                    self.playlist_listbox.insert(tk.END, title)
+                    self.songs_listbox.insert(tk.END, title)
             self.stop_process()
         else:
             messagebox.showerror("Playlist not found", "Provide a valid URL for a publicly accessible playlist and check internet connection.")
 
     def download_playlist(self):
-        selected_titles = [self.playlist_listbox.get(idx) for idx in self.playlist_listbox.curselection()]
+        selected_titles = [self.songs_listbox.get(idx) for idx in self.songs_listbox.curselection()]
         if len(selected_titles) == 0:
             selected_titles = self.get_selected_titles()
         if len(selected_titles) == 0:
@@ -75,7 +74,7 @@ class MPL3:
         self.start_process()
         selected_videos = [video for video in self.video_storage if video.title in selected_titles]
         streams = get_streams(selected_videos)
-        playlist_title = self.playlist_label.cget("text")
+        playlist_title = self.songs_label.cget("text")
         for idx, stream in enumerate(streams, start=1):
             print(f"Steam is: {stream}")
             try:
@@ -101,13 +100,13 @@ class MPL3:
             Logger.debug(message)
             messagebox.showerror(message)
 
-    def reset_playlist(self):
-        self.playlist_listbox.delete(0,tk.END)
+    def reset_songs(self):
+        self.songs_listbox.delete(0,tk.END)
         self.video_storage = []
-        self.playlist_label.config(text='Playlist Content')
+        self.songs_listbox.config(text='Playlist Content')
 
     def get_selected_titles(self):
-        return [self.playlist_listbox.get(idx) for idx in range(self.playlist_listbox.size())]
+        return [self.songs_listbox.get(idx) for idx in range(self.songs_listbox.size())]
 
     def start_preview(self):
         preview_thread = threading.Thread(target=self.preview_playlist)
