@@ -1,8 +1,6 @@
-from pytube import Playlist, YouTube
-import re
-import logger as Logger
-
 from classes import Wrapper, Video
+from pytube import Playlist, YouTube
+import re, logger as Logger
 
 video_pattern = re.compile(r'^https://www\.youtube\.(?:com|de|fr|...)/watch\?v=.+')
 playlist_pattern = re.compile(r'https://www\.youtube\.(?:com|de|fr|...)/playlist\?list=.+')

@@ -1,5 +1,5 @@
-import logging
 from file_handling import is_exe
+import logging
 
 def info(message):
     if is_exe():
@@ -27,6 +27,7 @@ def configureInfo(filename):
     configureLogger(filename, logging.INFO)
     
 def configureLogger(filename, level):
+    filename = f"./logs/{filename}"
     logging.basicConfig(
         filename=filename, 
         level=level, 

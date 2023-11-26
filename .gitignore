@@ -1,7 +1,6 @@
 __pycache__/
 out/*
 build/
-# Exlude all from dist except assets
 dist/*
 !dist/assets/
-debug.log
+logs/*

@@ -1,10 +1,9 @@
-from file_handling import get_root_folder, is_exe
+import sys, os, threading, tkinter as tk, logger as Logger
 from youtube_parser import get_data_from_url, get_streams
-import sys, os, threading, tkinter as tk
+from file_handling import get_root_folder, is_exe
 from converter import convert_to_mp3
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
-import logger as Logger
 
 class MPL3:
     def __init__(self, master):
@@ -125,7 +124,7 @@ class MPL3:
         
 if __name__ == "__main__":
     executed_as_exe = is_exe()
-    # Don't delete me, moviepy needs something to write to if no console is present
+    # Don't delete, moviepy needs something to write to if no console is present
     temp_output_path = os.path.join(get_root_folder(), "output.txt")
     temp_output_file = None
     if executed_as_exe:

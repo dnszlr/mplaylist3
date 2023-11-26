@@ -1,7 +1,6 @@
-from moviepy.editor import AudioFileClip
 from file_handling import get_root_folder
-import os
-import logger as Logger
+from moviepy.editor import AudioFileClip
+import os, logger as Logger
 
 def convert_to_mp3(video, title):
     output_folder = os.path.join(get_root_folder(), "out")
