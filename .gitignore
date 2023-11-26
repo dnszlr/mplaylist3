@@ -3,4 +3,5 @@ out/*
 build/
 dist/*
 !dist/assets/
-logs/*
+!dist/logs/
+dist/logs/*
