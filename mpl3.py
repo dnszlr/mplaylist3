@@ -11,7 +11,7 @@ class MPL3:
         # Set up master
         self.master = master
         self.master.title("MPL3")
-        self.master.geometry("1200x800")
+        self.master.geometry("800x600")
 
         # Data storage
         self.video_storage = []
