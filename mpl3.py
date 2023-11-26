@@ -11,21 +11,21 @@ class MPL3:
 
         # Set up master
         self.master = master
-        self.master.title("MPL3 YouTube Playlist Downloader")
+        self.master.title("MPL3")
         self.master.geometry("800x600")
 
         # Data storage
         self.video_storage = []
 
         # Playlist Link Entry
-        self.playlist_label = tk.Label(master, text="Playlist URL")
+        self.playlist_label = tk.Label(master, text="Playlist or Video URL")
         self.playlist_label.pack()
 
         self.playlist_entry = tk.Entry(master)
         self.playlist_entry.pack(fill=tk.X)
 
         # Playlist Listbox
-        self.playlist_label = tk.Label(master, text="Playlist Content")
+        self.playlist_label = tk.Label(master, text="Song titles")
         self.playlist_label.pack()
         self.playlist_listbox = tk.Listbox(master, selectmode=tk.MULTIPLE)
         self.playlist_listbox.pack(expand=True, fill=tk.BOTH)
