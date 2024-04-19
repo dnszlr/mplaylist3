@@ -73,10 +73,10 @@ class MPL3:
         for idx, stream in enumerate(streams, start=1):
             try:
                 convert_to_mp3(stream, title)
+                messagebox.showinfo("Completion", "The download process has been completed.")
             except Exception as err:
                 Logger.error(f"Error while downloading or converting {stream['title']} to mp3 with {err}")
             self.increase_process_value((idx / len(streams)) * 100)
-        messagebox.showinfo("Completion", "The download process has been completed.")
         self.stop_process()
 
     def open_files(self):
